@@ -14,10 +14,6 @@
   <!-- Three.js 3D WebGL Library for true interactive 3D Cosmos -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  <!-- GSAP & ScrollTrigger: The World's #1 Award-Winning Web Motion Engine -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -54,7 +50,7 @@
       font-family: var(--font-mono);
     }
 
-    /* Fixed Interactive 3D Cosmic Galaxy Canvas (Background stays interactive throughout scroll) */
+    /* Fixed Interactive 3D Cosmic Galaxy Canvas */
     #webgl-cosmic-canvas {
       position: fixed;
       top: 0;
@@ -153,8 +149,10 @@
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .sound-badge.sound-on {
-      border-color: rgba(255, 255, 255, 0.4);
-      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(56, 189, 248, 0.6);
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
     }
   </style>
 </head>
@@ -185,7 +183,7 @@
     <div class="pointer-events-auto flex items-center gap-3">
       
       <!-- Interactive Web Audio Synthesizer Toggle -->
-      <button id="sound-btn" onclick="toggleAudio()" class="sound-badge flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 text-neutral-400 hover:text-white text-xs font-mono transition-all" title="Toggle Synthesizer Soundscapes">
+      <button id="sound-btn" onclick="toggleAudio()" class="sound-badge flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 text-neutral-400 hover:text-white text-xs font-mono transition-all" title="Toggle 3D Cosmic Audio Engine">
         <i data-lucide="volume-x" id="sound-icon" class="w-3.5 h-3.5"></i>
         <span class="hidden sm:inline text-[11px]" id="sound-text">AUDIO: OFF</span>
       </button>
@@ -206,9 +204,9 @@
     <!-- Top Micro Tag -->
     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl mb-8 shadow-lg">
       <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-      <span class="text-xs font-mono text-neutral-200 uppercase tracking-widest">3D COSMIC ENGINE ACTIVE</span>
+      <span class="text-xs font-mono text-neutral-200 uppercase tracking-widest">3D AUDIO-SPATIAL ENGINE</span>
       <span class="text-neutral-500 font-mono">/</span>
-      <span class="text-xs font-mono text-cyan-300">SCROLL DOWN FOR CINEMATIC REVEAL</span>
+      <span class="text-xs font-mono text-cyan-300">TURN AUDIO ON FOR DEEP SPACE SOUND</span>
     </div>
 
     <!-- Monumental Typography -->
@@ -221,7 +219,7 @@
 
     <!-- Subtitle -->
     <p class="mt-8 text-neutral-300 text-sm sm:text-base md:text-lg max-w-2xl font-light leading-relaxed drop-shadow-md">
-      An interactive WebGL 3D neural swarm. Hover and move your mouse to explore the celestial constellation and gravitational particle physics.
+      An interactive WebGL 3D neural swarm with real-time procedural acoustics. Move your mouse or scroll to hear the celestial harmonics shift across spatial stereo channels.
     </p>
 
     <!-- Dual Action Pill -->
@@ -379,7 +377,7 @@
       <!-- Live Terminal Output Area -->
       <div class="bg-black/80 rounded-2xl p-5 border border-white/5 font-mono text-xs text-neutral-300 min-h-[220px] max-h-[300px] overflow-y-auto space-y-2" id="term-logs">
         <div class="text-neutral-500">[00:00:01] Nexus cosmic 3D swarm daemon v3.8 initialized.</div>
-        <div class="text-neutral-500">[00:00:02] WebGL 3D Gravitational Field active. Rendering 2,800 stellar nodes.</div>
+        <div class="text-neutral-500">[00:00:02] Spatial 3D Audio synthesizer linked to orbital coordinates.</div>
         <div class="text-white/80">[00:00:03] Awaiting user intent or automated cron pipeline... <span class="term-cursor"></span></div>
       </div>
 
@@ -647,9 +645,134 @@
     </div>
   </div>
 
-  <!-- ==================== THREE.JS 3D WEBGL COSMOS + SCROLLTRIGGER ANIMATIONS ==================== -->
+  <!-- ==================== THREE.JS 3D WEBGL COSMOS + PROCEDURAL SPATIAL AUDIO ==================== -->
   <script>
-    // 1. THREE.JS REAL 3D CELESTIAL GALAXY & NEURAL SWARM
+    // ==================== 1. PROCEDURAL 3D SPATIAL AUDIO SYNTHESIZER ====================
+    let audioCtx = null;
+    let isSoundOn = false;
+    let cosmicHumOsc = null;
+    let cosmicHumGain = null;
+    let spatialPanner = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // Continuous Deep Space Ambient Resonator (Subtle 55Hz Sci-Fi Drone)
+        cosmicHumOsc = audioCtx.createOscillator();
+        cosmicHumGain = audioCtx.createGain();
+        spatialPanner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+        cosmicHumOsc.type = 'sine';
+        cosmicHumOsc.frequency.setValueAtTime(55, audioCtx.currentTime); // Low frequency cosmic hum
+        cosmicHumGain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+
+        if (spatialPanner) {
+          cosmicHumOsc.connect(cosmicHumGain);
+          cosmicHumGain.connect(spatialPanner);
+          spatialPanner.connect(audioCtx.destination);
+        } else {
+          cosmicHumOsc.connect(cosmicHumGain);
+          cosmicHumGain.connect(audioCtx.destination);
+        }
+        cosmicHumOsc.start();
+      }
+    }
+
+    // Dynamic 3D Sound triggered on Galaxy movement
+    let lastSoundTime = 0;
+    function play3DMotionChime(panVal = 0, speedFactor = 1) {
+      if (!isSoundOn || !audioCtx) return;
+      const now = performance.now();
+      if (now - lastSoundTime < 65) return; // Prevent audio overload
+      lastSoundTime = now;
+
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const panner = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+        // Celestial harmonic chime (pentatonic scale notes)
+        const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+        const randomNote = notes[Math.floor(Math.random() * notes.length)];
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(randomNote, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(randomNote * 1.5, audioCtx.currentTime + 0.12);
+
+        gain.gain.setValueAtTime(0.015 * Math.min(speedFactor, 1.5), audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.18);
+
+        if (panner) {
+          panner.pan.setValueAtTime(Math.max(-1, Math.min(1, panVal)), audioCtx.currentTime);
+          osc.connect(gain);
+          gain.connect(panner);
+          panner.connect(audioCtx.destination);
+        } else {
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+        }
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.18);
+      } catch (e) {}
+    }
+
+    // Scroll Warp Sound
+    let lastScrollSound = 0;
+    function playScrollWarpSound(depthRatio) {
+      if (!isSoundOn || !audioCtx) return;
+      const now = performance.now();
+      if (now - lastScrollSound < 90) return;
+      lastScrollSound = now;
+
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        const freq = 120 + (depthRatio * 280);
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.8, audioCtx.currentTime + 0.2);
+
+        gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      initAudio();
+      isSoundOn = !isSoundOn;
+      const btn = document.getElementById('sound-btn');
+      const icon = document.getElementById('sound-icon');
+      const text = document.getElementById('sound-text');
+
+      if (isSoundOn) {
+        btn.classList.add('sound-on');
+        text.textContent = 'AUDIO: 3D ON';
+        icon.setAttribute('data-lucide', 'volume-2');
+        if (cosmicHumGain) {
+          cosmicHumGain.gain.cancelScheduledValues(audioCtx.currentTime);
+          cosmicHumGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 0.8);
+        }
+        play3DMotionChime(0, 1.2);
+      } else {
+        btn.classList.remove('sound-on');
+        text.textContent = 'AUDIO: OFF';
+        icon.setAttribute('data-lucide', 'volume-x');
+        if (cosmicHumGain) {
+          cosmicHumGain.gain.cancelScheduledValues(audioCtx.currentTime);
+          cosmicHumGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+        }
+      }
+      lucide.createIcons();
+    }
+
+    // ==================== 2. THREE.JS REAL 3D CELESTIAL GALAXY ====================
     const canvas = document.getElementById('webgl-cosmic-canvas');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
@@ -665,9 +788,9 @@
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
 
-    const color1 = new THREE.Color(0xffffff); // Pure starlight
-    const color2 = new THREE.Color(0x38bdf8); // Cyan nebula
-    const color3 = new THREE.Color(0x818cf8); // Indigo cosmic glow
+    const color1 = new THREE.Color(0xffffff);
+    const color2 = new THREE.Color(0x38bdf8);
+    const color3 = new THREE.Color(0x818cf8);
 
     for (let i = 0; i < particleCount; i++) {
       const i3 = i * 3;
@@ -706,25 +829,26 @@
     const starField = new THREE.Points(geometry, material);
     scene.add(starField);
 
-    // Glowing Core Sphere
+    // Core Sphere
     const coreGeo = new THREE.SphereGeometry(18, 32, 32);
     const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, wireframe: true });
     const coreSphere = new THREE.Mesh(coreGeo, coreMat);
     scene.add(coreSphere);
 
-    // Outer Orbital Ring
+    // Orbit Ring
     const ringGeo = new THREE.RingGeometry(85, 87, 64);
     const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.25 });
     const orbitRing = new THREE.Mesh(ringGeo, ringMat);
     orbitRing.rotation.x = Math.PI / 2.5;
     scene.add(orbitRing);
 
-    // Mouse Tracking for Interactive 3D Cosmic Rotation
+    // Mouse Tracking for Interactive 3D Cosmic Rotation & Sound
     let targetRotationX = 0;
     let targetRotationY = 0;
     let scrollCameraZ = 400;
     let windowHalfX = window.innerWidth / 2;
     let windowHalfY = window.innerHeight / 2;
+    let prevMouseX = 0, prevMouseY = 0;
 
     window.addEventListener('mousemove', (event) => {
       const mouseX = event.clientX - windowHalfX;
@@ -732,13 +856,30 @@
 
       targetRotationY = mouseX * 0.0012;
       targetRotationX = mouseY * 0.0009;
+
+      // Calculate speed of mouse movement to trigger spatial chimes
+      const deltaX = event.clientX - prevMouseX;
+      const deltaY = event.clientY - prevMouseY;
+      const speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      prevMouseX = event.clientX;
+      prevMouseY = event.clientY;
+
+      if (speed > 8) {
+        const pan = mouseX / windowHalfX; // Stereo Pan from -1 (left ear) to +1 (right ear)
+        play3DMotionChime(pan, speed / 25);
+        if (spatialPanner) spatialPanner.pan.setValueAtTime(pan * 0.7, audioCtx.currentTime);
+      }
     });
 
-    // Deep Space Warp on Scroll (Camera travels deeper into galaxy as you scroll down!)
+    // Deep Space Warp on Scroll with Audio
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
       scrollCameraZ = 400 - (scrollY * 0.12);
       targetRotationY += 0.002;
+
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const depthRatio = Math.min(scrollY / (maxScroll || 1), 1);
+      playScrollWarpSound(depthRatio);
     });
 
     function onWindowResize() {
@@ -756,7 +897,6 @@
       starField.rotation.y += 0.0012 + (targetRotationY - starField.rotation.y) * 0.05;
       starField.rotation.x += (targetRotationX - starField.rotation.x) * 0.05;
 
-      // Smooth camera depth flight on scroll
       camera.position.z += (scrollCameraZ - camera.position.z) * 0.05;
 
       coreSphere.rotation.y -= 0.003;
@@ -769,20 +909,14 @@
     }
     animateCosmos();
 
-    // ==================== 2. AWARD-WINNING CINEMATIC SCROLL REVEALS ====================
-    // Intersection Observer for silky smooth 3D elevation on scroll
-    const observerOptions = {
-      root: null,
-      threshold: 0.15,
-      rootMargin: "0px 0px -50px 0px"
-    };
+    // ==================== 3. SCROLL OBSERVER WITH ELEVATION SOUNDS ====================
+    const observerOptions = { root: null, threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
 
     const scrollObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-revealed');
           
-          // If section contains cards, stagger their reveal with 3D unfold effect
           const cards = entry.target.querySelectorAll('.reveal-card');
           cards.forEach((card, idx) => {
             setTimeout(() => {
@@ -793,16 +927,11 @@
       });
     }, observerOptions);
 
-    document.querySelectorAll('.reveal-section').forEach(sec => {
+    document.querySelectorAll('.reveal-section, .reveal-card').forEach(sec => {
       scrollObserver.observe(sec);
     });
 
-    // Also observe individual cards for natural scroll-triggered lift
-    document.querySelectorAll('.reveal-card').forEach(card => {
-      scrollObserver.observe(card);
-    });
-
-    // ==================== 3. 3D MAGNETIC CARD TILT ON MOUSE HOVER ====================
+    // 3D Magnetic Card Tilt
     document.querySelectorAll('.nexus-card').forEach(card => {
       card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
@@ -823,51 +952,7 @@
       });
     });
 
-    // ==================== 4. WEB AUDIO SYNTHESIZER ====================
-    let audioCtx = null;
-    let isSoundOn = false;
-
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-
-    function playSyntheticSound(freq = 440, type = 'sine', duration = 0.15) {
-      if (!isSoundOn || !audioCtx) return;
-      try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
-      } catch (e) {}
-    }
-
-    function toggleAudio() {
-      initAudio();
-      isSoundOn = !isSoundOn;
-      const btn = document.getElementById('sound-btn');
-      const icon = document.getElementById('sound-icon');
-      const text = document.getElementById('sound-text');
-
-      if (isSoundOn) {
-        btn.classList.add('sound-on');
-        text.textContent = 'AUDIO: ON';
-        icon.setAttribute('data-lucide', 'volume-2');
-        playSyntheticSound(600, 'sine', 0.2);
-      } else {
-        btn.classList.remove('sound-on');
-        text.textContent = 'AUDIO: OFF';
-        icon.setAttribute('data-lucide', 'volume-x');
-      }
-      lucide.createIcons();
-    }
-
-    // ==================== 5. LIVE SWARM SIMULATOR SCRIPT ====================
+    // Live Swarm Simulator Script
     function runLiveHandoff() {
       const logs = document.getElementById('term-logs');
       const btn = document.getElementById('btn-run-handoff');
@@ -877,7 +962,7 @@
 
       btn.disabled = true;
       btn.textContent = '⚡ Orchestrating Task...';
-      playSyntheticSound(520, 'sine', 0.2);
+      play3DMotionChime(0, 1.5);
 
       card1.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.03] shadow-lg';
       logs.innerHTML += `<div class="text-amber-300">[${new Date().toLocaleTimeString()}] [ORCHESTRATOR] Received: 'Compile 3D celestial telemetry Raft consensus with ZK verifier'</div>`;
@@ -888,7 +973,7 @@
         card2.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.03] shadow-lg';
         logs.innerHTML += `<div class="text-cyan-300">[${new Date().toLocaleTimeString()}] [SYNTHESIZER] Emitted 480 lines Rust zero-alloc orbital kernel.</div>`;
         logs.scrollTop = logs.scrollHeight;
-        playSyntheticSound(680, 'sine', 0.15);
+        play3DMotionChime(0.5, 1.8);
 
         setTimeout(() => {
           card2.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
@@ -896,7 +981,7 @@
           logs.innerHTML += `<div class="text-emerald-300">[${new Date().toLocaleTimeString()}] [VERIFIER] ZK-STARK proof verified: 0 security violations found (0.3ms).</div>`;
           logs.innerHTML += `<div class="text-white font-bold">[${new Date().toLocaleTimeString()}] [CONSENSUS] Swarm signed orbital commit #0x77A1F9. Deployment SUCCESS.</div>`;
           logs.scrollTop = logs.scrollHeight;
-          playSyntheticSound(880, 'sine', 0.3);
+          play3DMotionChime(-0.5, 2.2);
 
           setTimeout(() => {
             card3.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
@@ -920,7 +1005,7 @@
       const modal = document.getElementById('deploy-modal');
       document.getElementById('modal-plan-title').textContent = `Deploy: ${plan}`;
       modal.classList.remove('hidden');
-      playSyntheticSound(480, 'sine', 0.1);
+      play3DMotionChime(0, 1.2);
     }
     function closeDeployModal() {
       document.getElementById('deploy-modal').classList.add('hidden');
