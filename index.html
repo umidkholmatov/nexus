@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-[#030305] text-[#f0f0f5]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>NEXUS-01 — Autonomous Deep Space & Neural Multi-Agent Swarm</title>
+  
+  <!-- Premium Fonts: Clash Display + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --font-display: 'Clash Display', sans-serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: #030305;
+      color: #eaeaf2;
+      overflow-x: hidden;
+      cursor: auto; /* Default natural mouse arrow */
+    }
+
+    /* Standard interactive cursor for buttons and links */
+    a, button, input, select {
+      cursor: pointer !important;
+    }
+
+    .font-display {
+      font-family: var(--font-display);
+    }
+    .font-mono {
+      font-family: var(--font-mono);
+    }
+
+    /* Deep Cosmic Ambient Video Background */
+    .cosmic-video-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .cosmic-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.55;
+      filter: saturate(1.2) contrast(1.15) brightness(0.85);
+    }
+    .cosmic-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 35%, rgba(3, 3, 5, 0.25) 0%, rgba(3, 3, 5, 0.85) 75%, #030305 100%);
+      pointer-events: none;
+    }
+
+    /* Liquid Glass Card System */
+    .nexus-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.4s ease, 
+                  box-shadow 0.4s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .nexus-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.1), transparent 45%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    .nexus-card:hover::before {
+      opacity: 1;
+    }
+    .nexus-card:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.85), 
+                  0 0 35px -5px rgba(255, 255, 255, 0.08);
+    }
+
+    /* Ambient Neural Particle Canvas */
+    #neural-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.5;
+    }
+
+    /* Marquee Track */
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 32s linear infinite;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Terminal Cursor */
+    .term-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: #fff;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* Sound Switch Pill */
+    .sound-badge {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sound-badge.sound-on {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- ==================== 1. FLOATING NAVIGATION BAR ==================== -->
+  <header class="fixed top-6 left-0 right-0 z-50 px-4 sm:px-8 max-w-7xl mx-auto flex items-center justify-between pointer-events-none">
+    
+    <!-- Logo Badge -->
+    <a href="#" class="pointer-events-auto flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 hover:border-white/30 transition-all group">
+      <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center border border-white/20 group-hover:scale-105 transition-transform">
+        <div class="w-2.5 h-2.5 rounded-sm bg-white rotate-45 group-hover:rotate-90 transition-transform duration-500"></div>
+      </div>
+      <span class="font-display font-medium text-sm tracking-tight text-white">NEXUS<span class="text-white/40 font-mono text-xs ml-1">v3.8</span></span>
+    </a>
+
+    <!-- Center Nav Links (Desktop) -->
+    <nav class="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 pointer-events-auto shadow-2xl">
+      <a href="#architecture" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Architecture</a>
+      <a href="#swarm-engine" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Deep Space Swarm</a>
+      <a href="#console" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Live Console</a>
+      <a href="#pricing" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Deployments</a>
+    </nav>
+
+    <!-- Right Controls: Audio Toggle + CTA -->
+    <div class="pointer-events-auto flex items-center gap-3">
+      
+      <!-- Interactive Web Audio Synthesizer Toggle -->
+      <button id="sound-btn" onclick="toggleAudio()" class="sound-badge flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 text-neutral-400 hover:text-white text-xs font-mono transition-all" title="Toggle Synthesizer Soundscapes">
+        <i data-lucide="volume-x" id="sound-icon" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline text-[11px]" id="sound-text">AUDIO: OFF</span>
+      </button>
+
+      <!-- Deploy Trigger -->
+      <button onclick="openDeployModal()" class="px-6 py-2.5 rounded-full bg-white text-black hover:bg-neutral-200 text-xs font-semibold tracking-tight transition-all hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.25)] flex items-center gap-2 group">
+        <span>Initialize Swarm</span>
+        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+      </button>
+
+    </div>
+
+  </header>
+
+  <!-- ==================== 2. HERO SHOWCASE WITH COSMIC DEEP SPACE VIDEO ==================== -->
+  <section class="relative min-h-screen pt-36 pb-20 px-4 sm:px-8 flex flex-col justify-center items-center text-center z-10 overflow-hidden">
+    
+    <!-- ASTRONOMICAL DEEP SPACE LOOPING VIDEO -->
+    <div class="cosmic-video-container">
+      <video 
+        class="cosmic-video" 
+        autoplay 
+        loop 
+        muted 
+        playsinline
+        src="https://images-assets.nasa.gov/video/GSFC_20100126_Nova_m10547_SuperNova/GSFC_20100126_Nova_m10547_SuperNova~orig.mp4"
+      ></video>
+      <div class="cosmic-overlay"></div>
+    </div>
+
+    <!-- Interactive Neural Particles over video -->
+    <canvas id="neural-canvas"></canvas>
+
+    <!-- Top Micro Tag -->
+    <div class="relative z-10 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl mb-8 animate-fade-in shadow-lg">
+      <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+      <span class="text-xs font-mono text-neutral-200 uppercase tracking-widest">DEEP SPACE TELEMETRY PROTOCOL 3.8</span>
+      <span class="text-neutral-500 font-mono">/</span>
+      <span class="text-xs font-mono text-white/70">ORBITAL SYNCHRONIZATION</span>
+    </div>
+
+    <!-- Monumental Typography -->
+    <h1 class="relative z-10 font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-semibold tracking-tight leading-[0.92] text-white max-w-6xl mx-auto">
+      Cosmic scale intellect <br>
+      <span class="text-transparent bg-clip-text bg-gradient-to-b from-white via-white/85 to-white/40 italic font-light">
+        orchestrating as one swarm.
+      </span>
+    </h1>
+
+    <!-- Subtitle -->
+    <p class="relative z-10 mt-8 text-neutral-300 text-sm sm:text-base md:text-lg max-w-2xl font-light leading-relaxed drop-shadow-md">
+      Coordinate hundreds of autonomous neural agents across distributed micro-clusters, deep space telemetries, and instant mathematical verification.
+    </p>
+
+    <!-- Dual Action Pill -->
+    <div class="relative z-10 mt-10 flex flex-col sm:flex-row items-center gap-4">
+      <button onclick="simulateNexusExecution()" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-neutral-200 transition-all hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.35)] flex items-center justify-center gap-3">
+        <i data-lucide="play" class="w-4 h-4 fill-black"></i>
+        <span>Trigger Swarm Simulation</span>
+      </button>
+
+      <a href="#console" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white/[0.08] hover:bg-white/[0.15] border border-white/20 text-white font-medium text-sm transition-all flex items-center justify-center gap-3 backdrop-blur-2xl shadow-lg">
+        <i data-lucide="terminal" class="w-4 h-4 text-neutral-300"></i>
+        <span>Inspect Live Telemetry</span>
+      </a>
+    </div>
+
+    <!-- Live Quick Metrics Ribbon -->
+    <div class="relative z-10 mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 w-full max-w-4xl p-6 rounded-3xl bg-[#07070d]/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
+      <div class="text-left">
+        <span class="text-[11px] font-mono text-neutral-400 uppercase block mb-1">Active Swarms</span>
+        <span class="font-display text-2xl sm:text-3xl font-medium text-white tracking-tight" id="metric-swarms">1,482</span>
+        <span class="text-[10px] text-cyan-400 font-mono block mt-0.5">● Deep space sync</span>
+      </div>
+      <div class="text-left">
+        <span class="text-[11px] font-mono text-neutral-400 uppercase block mb-1">Consensus Latency</span>
+        <span class="font-display text-2xl sm:text-3xl font-medium text-white tracking-tight">0.82ms</span>
+        <span class="text-[10px] text-neutral-300 font-mono block mt-0.5">Direct P2P mesh</span>
+      </div>
+      <div class="text-left">
+        <span class="text-[11px] font-mono text-neutral-400 uppercase block mb-1">Synthesized Ops</span>
+        <span class="font-display text-2xl sm:text-3xl font-medium text-white tracking-tight" id="metric-ops">48.2M</span>
+        <span class="text-[10px] text-neutral-300 font-mono block mt-0.5">+12.4k/sec</span>
+      </div>
+      <div class="text-left">
+        <span class="text-[11px] font-mono text-neutral-400 uppercase block mb-1">Fault Tolerance</span>
+        <span class="font-display text-2xl sm:text-3xl font-medium text-white tracking-tight">99.999%</span>
+        <span class="text-[10px] text-emerald-400 font-mono block mt-0.5">Byzantine-proof</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==================== 3. INFINITE CLIENT MARQUEE ==================== -->
+  <section class="py-12 border-y border-white/5 relative overflow-hidden bg-black/60 backdrop-blur-md z-10">
+    <div class="max-w-7xl mx-auto px-4 mb-4 text-center">
+      <span class="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">
+        Trusted to orchestrate critical autonomy across high-load infrastructures
+      </span>
+    </div>
+
+    <div class="marquee-track flex items-center gap-16 py-4 opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700">
+      <span class="text-xl font-display font-semibold tracking-wider text-white">CHRONOS_LABS</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">VORTEX.AI</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">HYPERION_DATA</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">SYNAPSE_QUANT</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">KINETIC_SCALE</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">NEURAL_DRIFT</span>
+      <!-- Duplicate for infinite seamless scroll -->
+      <span class="text-xl font-display font-semibold tracking-wider text-white">CHRONOS_LABS</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">VORTEX.AI</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">HYPERION_DATA</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">SYNAPSE_QUANT</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">KINETIC_SCALE</span>
+      <span class="text-xl font-display font-semibold tracking-wider text-white">NEURAL_DRIFT</span>
+    </div>
+  </section>
+
+  <!-- ==================== 4. INTERACTIVE NEURAL CONSOLE ==================== -->
+  <section id="console" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+      <div>
+        <div class="inline-flex items-center gap-2 text-xs font-mono text-neutral-400 mb-3">
+          <span class="w-2 h-2 rounded-full bg-white"></span>
+          <span>[LIVE TELEMETRY // 01]</span>
+        </div>
+        <h2 class="font-display text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
+          Real-time Agentic Runtime. <br>
+          <span class="text-neutral-500">Every decision traceable in memory.</span>
+        </h2>
+      </div>
+
+      <p class="text-sm text-neutral-400 max-w-md font-light leading-relaxed">
+        Observe multi-agent communication streams in real-time. Watch how Lead, Code, and Verification agents synchronize without deadlocks.
+      </p>
+    </div>
+
+    <!-- Terminal Window -->
+    <div class="nexus-card rounded-3xl p-6 sm:p-8 border border-white/15 bg-[#09090e]/95 shadow-2xl">
+      
+      <!-- Top Chrome -->
+      <div class="flex items-center justify-between pb-6 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+          <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+          <span class="ml-3 text-xs font-mono text-neutral-400">nexus-daemon@deep-space-relay</span>
+        </div>
+
+        <div class="flex items-center gap-4 text-xs font-mono text-neutral-400">
+          <span class="hidden sm:inline">SWARM_ID: <span class="text-white">#0x8F9B</span></span>
+          <span class="flex items-center gap-1.5 text-cyan-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+            CONNECTED
+          </span>
+        </div>
+      </div>
+
+      <!-- Agent Swarm Visualizer -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+        
+        <!-- Agent 1 -->
+        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-1">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
+              <i data-lucide="brain" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-medium text-white">Lead Orchestrator</div>
+              <div class="text-[10px] font-mono text-neutral-400">Decomposing intent...</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">READY</span>
+        </div>
+
+        <!-- Agent 2 -->
+        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-2">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
+              <i data-lucide="code-2" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-medium text-white">Code Synthesizer</div>
+              <div class="text-[10px] font-mono text-neutral-400">Rust kernel generation</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/80 border border-white/10">IDLE</span>
+        </div>
+
+        <!-- Agent 3 -->
+        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-3">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <div class="text-xs font-medium text-white">Formal Verifier</div>
+              <div class="text-[10px] font-mono text-neutral-400">SMT solver active</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white/10 text-white/80 border border-white/10">IDLE</span>
+        </div>
+
+      </div>
+
+      <!-- Live Terminal Output Area -->
+      <div class="bg-black/80 rounded-2xl p-5 border border-white/5 font-mono text-xs text-neutral-300 min-h-[220px] max-h-[300px] overflow-y-auto space-y-2" id="term-logs">
+        <div class="text-neutral-500">[00:00:01] Nexus cosmic multi-agent daemon v3.8 initialized.</div>
+        <div class="text-neutral-500">[00:00:02] Connected to 1,482 neural nodes across distributed low-earth constellations.</div>
+        <div class="text-white/80">[00:00:03] Awaiting user intent or automated cron pipeline... <span class="term-cursor"></span></div>
+      </div>
+
+      <!-- Command Input Action Bar -->
+      <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5">
+        <span class="text-xs font-mono text-neutral-400">
+          Want to see real-time agent handoffs?
+        </span>
+        <button onclick="runLiveHandoff()" id="btn-run-handoff" class="w-full sm:w-auto px-6 py-2.5 rounded-full bg-white/10 hover:bg-white text-white hover:text-black font-mono text-xs uppercase tracking-wider transition-all duration-300 border border-white/15">
+          ▶ Simulate Task Handoff
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== 5. ARCHITECTURAL BENTO GRID ==================== -->
+  <section id="architecture" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10 border-t border-white/5">
+    
+    <div class="text-center max-w-3xl mx-auto mb-20">
+      <div class="inline-flex items-center gap-2 text-xs font-mono text-neutral-400 mb-3">
+        <span class="w-2 h-2 rounded-full bg-white"></span>
+        <span>[CORE CAPABILITIES // 02]</span>
+      </div>
+      <h2 class="font-display text-4xl sm:text-6xl font-semibold tracking-tight text-white">
+        Engineered for zero human bottlenecks.
+      </h2>
+      <p class="text-neutral-400 text-sm sm:text-base mt-4 font-light leading-relaxed">
+        Every agent maintains an immutable episodic memory ledger, allowing state recovery in under 12 milliseconds during failovers.
+      </p>
+    </div>
+
+    <!-- Bento Grid Container -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Bento 1: Large Featured Card -->
+      <div class="nexus-card p-8 sm:p-10 md:col-span-2 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+            <i data-lucide="layers" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="text-xs font-mono text-neutral-400 uppercase tracking-widest block mb-2">DYNAMIC TOPOLOGY</span>
+          <h3 class="font-display text-2xl sm:text-4xl font-semibold text-white mb-4">
+            Autonomous Swarm Self-Reconfiguration.
+          </h3>
+          <p class="text-neutral-400 text-sm font-light leading-relaxed max-w-xl">
+            When latency spikes or an LLM provider degrades, Nexus instantly spawns redundant verification agents and reroutes consensus pathways across alternative neural weights without dropping execution state.
+          </p>
+        </div>
+
+        <div class="mt-12 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/80">FAILOVER: &lt;12ms</span>
+            <span class="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-white/80">ZERO STATE LOSS</span>
+          </div>
+          <span class="text-xs font-mono text-neutral-500">NEXUS-TOPOLOGY-v3</span>
+        </div>
+      </div>
+
+      <!-- Bento 2: Memory Ledger -->
+      <div class="nexus-card p-8 sm:p-10 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+            <i data-lucide="database" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="text-xs font-mono text-neutral-400 uppercase tracking-widest block mb-2">VECTOR STORAGE</span>
+          <h3 class="font-display text-2xl font-semibold text-white mb-3">Episodic Memory Ledger</h3>
+          <p class="text-neutral-400 text-xs sm:text-sm font-light leading-relaxed">
+            Persistent long-term vector recalls across millions of multi-turn conversations with hybrid sparse-dense embeddings.
+          </p>
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400">
+          <span>RECALL SPEED</span>
+          <span class="text-white">1.1ms</span>
+        </div>
+      </div>
+
+      <!-- Bento 3: Formal Verification -->
+      <div class="nexus-card p-8 sm:p-10 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+            <i data-lucide="lock" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="text-xs font-mono text-neutral-400 uppercase tracking-widest block mb-2">SECURITY</span>
+          <h3 class="font-display text-2xl font-semibold text-white mb-3">Cryptographic Guardrails</h3>
+          <p class="text-neutral-400 text-xs sm:text-sm font-light leading-relaxed">
+            No agent action executes on production hosts without dual-party zero-knowledge mathematical verification proofs.
+          </p>
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400">
+          <span>PROOF TYPE</span>
+          <span class="text-white">ZK-STARK</span>
+        </div>
+      </div>
+
+      <!-- Bento 4: Wide Card -->
+      <div class="nexus-card p-8 sm:p-10 md:col-span-2 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+            <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="text-xs font-mono text-neutral-400 uppercase tracking-widest block mb-2">DISTRIBUTED HARDWARE</span>
+          <h3 class="font-display text-2xl sm:text-3xl font-semibold text-white mb-4">
+            Deploy Anywhere: Bare Metal to Edge Micro-Clusters.
+          </h3>
+          <p class="text-neutral-400 text-sm font-light leading-relaxed max-w-xl">
+            Compiled into single-binary native executables. Run your private swarm inside air-gapped data centers, AWS Outposts, or local Apple Silicon clusters with zero external cloud leaks.
+          </p>
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400">
+          <span>BINARY FOOTPRINT</span>
+          <span class="text-white">18.4 MB (Static Rust)</span>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== 6. PRICING & TIERS ==================== -->
+  <section id="pricing" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10 border-t border-white/5">
+    
+    <div class="text-center max-w-2xl mx-auto mb-16">
+      <div class="inline-flex items-center gap-2 text-xs font-mono text-neutral-400 mb-3">
+        <span class="w-2 h-2 rounded-full bg-white"></span>
+        <span>[DEPLOYMENT TIERS // 03]</span>
+      </div>
+      <h2 class="font-display text-3xl sm:text-5xl font-semibold tracking-tight text-white">
+        Predictable Swarm Compute.
+      </h2>
+    </div>
+
+    <!-- 3 Tier Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      
+      <!-- Tier 1 -->
+      <div class="nexus-card p-8 rounded-3xl flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-mono text-neutral-400 uppercase block mb-1">Developer</span>
+          <h3 class="font-display text-2xl font-semibold text-white">Local Swarm</h3>
+          <div class="mt-6 mb-6">
+            <span class="font-display text-4xl font-semibold text-white">$49</span>
+            <span class="text-xs text-neutral-400 font-mono">/lifetime license</span>
+          </div>
+          <ul class="text-xs text-neutral-300 space-y-3.5 pt-6 border-t border-white/10">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Up to 5 parallel agents</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Local SQLite episodic memory</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Single-machine binary</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Full source code & docs</li>
+          </ul>
+        </div>
+        <button onclick="openDeployModal('Local Swarm')" class="w-full mt-8 py-3.5 rounded-full border border-white/20 hover:border-white text-white text-xs font-medium transition-all">
+          Deploy Local Node
+        </button>
+      </div>
+
+      <!-- Tier 2 (Featured) -->
+      <div class="nexus-card p-8 rounded-3xl flex flex-col justify-between border-white/40 bg-white/[0.04] shadow-2xl relative">
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold">
+          RECOMMENDED
+        </div>
+        <div>
+          <span class="text-xs font-mono text-neutral-400 uppercase block mb-1">Scale Production</span>
+          <h3 class="font-display text-2xl font-semibold text-white">Cluster Pro</h3>
+          <div class="mt-6 mb-6">
+            <span class="font-display text-4xl font-semibold text-white">$189</span>
+            <span class="text-xs text-neutral-400 font-mono">/month</span>
+          </div>
+          <ul class="text-xs text-neutral-300 space-y-3.5 pt-6 border-t border-white/10">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Unlimited autonomous agent swarms</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Distributed Qdrant vector cluster</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Sub-millisecond P2P consensus mesh</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> 24/7 dedicated swarm engineers</li>
+          </ul>
+        </div>
+        <button onclick="openDeployModal('Cluster Pro')" class="w-full mt-8 py-3.5 rounded-full bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+          Initialize Cluster Pro
+        </button>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="nexus-card p-8 rounded-3xl flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-mono text-neutral-400 uppercase block mb-1">Air-Gapped</span>
+          <h3 class="font-display text-2xl font-semibold text-white">Enterprise Sovereign</h3>
+          <div class="mt-6 mb-6">
+            <span class="font-display text-4xl font-semibold text-white">Custom</span>
+            <span class="text-xs text-neutral-400 font-mono">/annual SLA</span>
+          </div>
+          <ul class="text-xs text-neutral-300 space-y-3.5 pt-6 border-t border-white/10">
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Air-gapped on-premise hardware</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> Custom cryptographic HSM chips</li>
+            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-white"></i> 99.999% SLA penalty guarantees</li>
+          </ul>
+        </div>
+        <button onclick="openDeployModal('Enterprise Sovereign')" class="w-full mt-8 py-3.5 rounded-full border border-white/20 hover:border-white text-white text-xs font-medium transition-all">
+          Contact System Architects
+        </button>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== 7. FOOTER ==================== -->
+  <footer class="py-16 px-4 sm:px-8 border-t border-white/10 relative z-10 bg-black/80">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
+          <div class="w-2.5 h-2.5 rounded-sm bg-white rotate-45"></div>
+        </div>
+        <span class="font-display font-medium text-sm text-white">NEXUS-01</span>
+        <span class="text-xs text-neutral-500 font-mono ml-2">© 2026 Sovereign Neural Systems. All rights reserved.</span>
+      </div>
+
+      <div class="flex items-center gap-6 text-xs font-mono text-neutral-400">
+        <a href="#architecture" class="hover:text-white transition-colors">Architecture</a>
+        <a href="#console" class="hover:text-white transition-colors">Telemetry</a>
+        <a href="https://github.com/umidkholmatov" target="_blank" class="hover:text-white transition-colors">GitHub</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ==================== 8. DEPLOY MODAL ==================== -->
+  <div id="deploy-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-xl hidden p-4">
+    <div class="nexus-card w-full max-w-md p-6 sm:p-8 rounded-3xl relative border border-white/20 shadow-2xl bg-[#0b0b10]">
+      <button onclick="closeDeployModal()" class="absolute top-5 right-5 text-neutral-400 hover:text-white transition-colors">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-5 h-5 rounded bg-white/10 flex items-center justify-center">
+          <div class="w-2 h-2 bg-white rotate-45"></div>
+        </div>
+        <span class="text-xs font-mono text-neutral-400 uppercase tracking-wider">CLUSTER PROVISIONING</span>
+      </div>
+
+      <h3 id="modal-plan-title" class="font-display text-2xl font-semibold text-white mb-2">Initialize Swarm</h3>
+      <p class="text-xs text-neutral-400 mb-6 leading-relaxed">Enter your engineer credentials to receive ephemeral cluster tokens and binary download keys.</p>
+
+      <form onsubmit="handleDeploySubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-mono text-neutral-400 mb-1">ENGINEER EMAIL</label>
+          <input type="email" required placeholder="lead@company.internal" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-neutral-600 focus:outline-none focus:border-white transition-all font-mono">
+        </div>
+        <div>
+          <label class="block text-[11px] font-mono text-neutral-400 mb-1">COMPUTE REGION</label>
+          <select class="w-full bg-[#121218] border border-white/10 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-white transition-all font-mono">
+            <option>eu-west-1 (Frankfurt Sovereign Enclave)</option>
+            <option>us-east-1 (N. Virginia Hyper-Mesh)</option>
+            <option>ap-southeast-1 (Singapore Low Latency)</option>
+            <option>Local Bare-Metal Enclave</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full mt-3 py-3.5 rounded-full bg-white text-black text-xs font-semibold hover:bg-neutral-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+          Authorize Cluster & Generate Key
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT: WEB AUDIO + PARTICLES + 3D TILT ==================== -->
+  <script>
+    // 1. Interactive Web Audio Synthesizer
+    let audioCtx = null;
+    let isSoundOn = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSyntheticSound(freq = 440, type = 'sine', duration = 0.15) {
+      if (!isSoundOn || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      initAudio();
+      isSoundOn = !isSoundOn;
+      const btn = document.getElementById('sound-btn');
+      const icon = document.getElementById('sound-icon');
+      const text = document.getElementById('sound-text');
+
+      if (isSoundOn) {
+        btn.classList.add('sound-on');
+        text.textContent = 'AUDIO: ON';
+        icon.setAttribute('data-lucide', 'volume-2');
+        playSyntheticSound(600, 'sine', 0.2);
+      } else {
+        btn.classList.remove('sound-on');
+        text.textContent = 'AUDIO: OFF';
+        icon.setAttribute('data-lucide', 'volume-x');
+      }
+      lucide.createIcons();
+    }
+
+    // 2. 3D Magnetic Card Tilt + Radial Spotlight
+    document.querySelectorAll('.nexus-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -6;
+        const rotateY = ((x - centerX) / centerX) * 6;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+      });
+    });
+
+    // 3. Interactive Neural Particle Canvas
+    const canvas = document.getElementById('neural-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let mouseX = -1000, mouseY = -1000;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      const hero = canvas.parentElement;
+      width = canvas.width = hero.clientWidth;
+      height = canvas.height = hero.clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
+        this.radius = Math.random() * 1.5 + 0.5;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+
+        const dx = mouseX - this.x;
+        const dy = mouseY - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 100) {
+          this.x -= (dx / dist) * 1.0;
+          this.y -= (dy / dist) * 1.0;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+        ctx.fill();
+      }
+    }
+
+    const count = window.innerWidth < 768 ? 30 : 65;
+    for (let i = 0; i < count; i++) particles.push(new Particle());
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // 4. Live Swarm Simulator Script
+    function runLiveHandoff() {
+      const logs = document.getElementById('term-logs');
+      const btn = document.getElementById('btn-run-handoff');
+      const card1 = document.getElementById('agent-card-1');
+      const card2 = document.getElementById('agent-card-2');
+      const card3 = document.getElementById('agent-card-3');
+
+      btn.disabled = true;
+      btn.textContent = '⚡ Orchestrating Task...';
+      playSyntheticSound(520, 'sine', 0.2);
+
+      card1.className = 'p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.02] shadow-lg';
+      logs.innerHTML += `<div class="text-amber-300">[${new Date().toLocaleTimeString()}] [ORCHESTRATOR] Received: 'Compile orbital telemetry Raft consensus with ZK verifier'</div>`;
+      logs.scrollTop = logs.scrollHeight;
+
+      setTimeout(() => {
+        card1.className = 'p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
+        card2.className = 'p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.02] shadow-lg';
+        logs.innerHTML += `<div class="text-cyan-300">[${new Date().toLocaleTimeString()}] [SYNTHESIZER] Emitted 480 lines Rust zero-alloc orbital kernel.</div>`;
+        logs.scrollTop = logs.scrollHeight;
+        playSyntheticSound(680, 'sine', 0.15);
+
+        setTimeout(() => {
+          card2.className = 'p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
+          card3.className = 'p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.02] shadow-lg';
+          logs.innerHTML += `<div class="text-emerald-300">[${new Date().toLocaleTimeString()}] [VERIFIER] ZK-STARK proof verified: 0 security violations found (0.3ms).</div>`;
+          logs.innerHTML += `<div class="text-white font-bold">[${new Date().toLocaleTimeString()}] [CONSENSUS] Swarm signed orbital commit #0x77A1F9. Deployment SUCCESS.</div>`;
+          logs.scrollTop = logs.scrollHeight;
+          playSyntheticSound(880, 'sine', 0.3);
+
+          setTimeout(() => {
+            card3.className = 'p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
+            btn.disabled = false;
+            btn.textContent = '▶ Simulate Task Handoff';
+          }, 1500);
+
+        }, 1200);
+
+      }, 1000);
+    }
+
+    function simulateNexusExecution() {
+      const consoleSec = document.getElementById('console');
+      consoleSec.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(runLiveHandoff, 700);
+    }
+
+    // 5. Modal Handlers
+    function openDeployModal(plan = 'Cluster Pro') {
+      const modal = document.getElementById('deploy-modal');
+      document.getElementById('modal-plan-title').textContent = `Deploy: ${plan}`;
+      modal.classList.remove('hidden');
+      playSyntheticSound(480, 'sine', 0.1);
+    }
+    function closeDeployModal() {
+      document.getElementById('deploy-modal').classList.add('hidden');
+    }
+    function handleDeploySubmit(e) {
+      e.preventDefault();
+      alert('✓ Ephemeral cluster authorization issued. Cryptographic keys dispatched.');
+      closeDeployModal();
+    }
+
+    // Init Lucide
+    if (window.lucide) lucide.createIcons();
+  </script>
+</body>
+</html>
