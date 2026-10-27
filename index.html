@@ -14,6 +14,10 @@
   <!-- Three.js 3D WebGL Library for true interactive 3D Cosmos -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
+  <!-- GSAP & ScrollTrigger: The World's #1 Award-Winning Web Motion Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -36,7 +40,7 @@
       background-color: #020204;
       color: #eaeaf2;
       overflow-x: hidden;
-      cursor: auto; /* Natural standard mouse pointer */
+      cursor: auto;
     }
 
     a, button, input, select {
@@ -50,15 +54,41 @@
       font-family: var(--font-mono);
     }
 
-    /* 3D WebGL Cosmic Canvas (Interactive Cosmos that rotates with mouse!) */
+    /* Fixed Interactive 3D Cosmic Galaxy Canvas (Background stays interactive throughout scroll) */
     #webgl-cosmic-canvas {
-      position: absolute;
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       z-index: 0;
       pointer-events: none;
+    }
+
+    /* Scroll Reveal & Transform Classes */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(60px) scale(0.96);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-section.is-revealed {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Staggered card entrance */
+    .reveal-card {
+      opacity: 0;
+      transform: translateY(50px) rotateX(8deg);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+    .reveal-card.is-revealed {
+      opacity: 1;
+      transform: translateY(0) rotateX(0deg);
     }
 
     /* Liquid Glass Card System */
@@ -89,7 +119,7 @@
       opacity: 1;
     }
     .nexus-card:hover {
-      border-color: rgba(255, 255, 255, 0.28);
+      border-color: rgba(255, 255, 255, 0.3);
       box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.85), 
                   0 0 35px -5px rgba(255, 255, 255, 0.08);
     }
@@ -105,6 +135,19 @@
       100% { transform: translateX(-50%); }
     }
 
+    /* Terminal Cursor */
+    .term-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: #fff;
+      vertical-align: middle;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
     /* Sound Switch Pill */
     .sound-badge {
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -117,21 +160,24 @@
 </head>
 <body class="relative">
 
+  <!-- ==================== FIXED 3D INTERACTIVE COSMOS BACKGROUND ==================== -->
+  <canvas id="webgl-cosmic-canvas"></canvas>
+
   <!-- ==================== 1. FLOATING NAVIGATION BAR ==================== -->
   <header class="fixed top-6 left-0 right-0 z-50 px-4 sm:px-8 max-w-7xl mx-auto flex items-center justify-between pointer-events-none">
     
     <!-- Logo Badge -->
-    <a href="#" class="pointer-events-auto flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 hover:border-white/30 transition-all group">
+    <a href="#" class="pointer-events-auto flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 hover:border-white/30 transition-all group shadow-xl">
       <div class="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center border border-white/20 group-hover:scale-105 transition-transform">
         <div class="w-2.5 h-2.5 rounded-sm bg-white rotate-45 group-hover:rotate-90 transition-transform duration-500"></div>
       </div>
-      <span class="font-display font-medium text-sm tracking-tight text-white">NEXUS<span class="text-white/40 font-mono text-xs ml-1">3D</span></span>
+      <span class="font-display font-medium text-sm tracking-tight text-white">NEXUS<span class="text-cyan-400 font-mono text-xs ml-1">3D</span></span>
     </a>
 
     <!-- Center Nav Links (Desktop) -->
     <nav class="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-[#07070b]/85 backdrop-blur-2xl border border-white/10 pointer-events-auto shadow-2xl">
-      <a href="#architecture" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Architecture</a>
       <a href="#console" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Live Console</a>
+      <a href="#architecture" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Architecture</a>
       <a href="#pricing" class="px-5 py-2 rounded-full text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all">Deployments</a>
     </nav>
 
@@ -154,22 +200,19 @@
 
   </header>
 
-  <!-- ==================== 2. HERO SHOWCASE WITH 3D INTERACTIVE COSMOS ==================== -->
-  <section id="hero-section" class="relative min-h-screen pt-36 pb-20 px-4 sm:px-8 flex flex-col justify-center items-center text-center z-10 overflow-hidden">
+  <!-- ==================== 2. HERO SHOWCASE ==================== -->
+  <section id="hero-section" class="relative min-h-screen pt-36 pb-20 px-4 sm:px-8 flex flex-col justify-center items-center text-center z-10">
     
-    <!-- 3D WEBGL COSMIC CANVAS (Move mouse to rotate the galaxy & stars!) -->
-    <canvas id="webgl-cosmic-canvas"></canvas>
-
     <!-- Top Micro Tag -->
-    <div class="relative z-10 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl mb-8 animate-fade-in shadow-lg">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/15 backdrop-blur-xl mb-8 shadow-lg">
       <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-      <span class="text-xs font-mono text-neutral-200 uppercase tracking-widest">INTERACTIVE 3D COSMIC ENGINE</span>
+      <span class="text-xs font-mono text-neutral-200 uppercase tracking-widest">3D COSMIC ENGINE ACTIVE</span>
       <span class="text-neutral-500 font-mono">/</span>
-      <span class="text-xs font-mono text-cyan-300">MOVE MOUSE TO ROTATE GALAXY</span>
+      <span class="text-xs font-mono text-cyan-300">SCROLL DOWN FOR CINEMATIC REVEAL</span>
     </div>
 
     <!-- Monumental Typography -->
-    <h1 class="relative z-10 font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-semibold tracking-tight leading-[0.92] text-white max-w-6xl mx-auto">
+    <h1 class="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-semibold tracking-tight leading-[0.92] text-white max-w-6xl mx-auto drop-shadow-2xl">
       Cosmic scale intellect <br>
       <span class="text-transparent bg-clip-text bg-gradient-to-b from-white via-white/85 to-white/40 italic font-light">
         orchestrating in 3D space.
@@ -177,12 +220,12 @@
     </h1>
 
     <!-- Subtitle -->
-    <p class="relative z-10 mt-8 text-neutral-300 text-sm sm:text-base md:text-lg max-w-2xl font-light leading-relaxed drop-shadow-md">
+    <p class="mt-8 text-neutral-300 text-sm sm:text-base md:text-lg max-w-2xl font-light leading-relaxed drop-shadow-md">
       An interactive WebGL 3D neural swarm. Hover and move your mouse to explore the celestial constellation and gravitational particle physics.
     </p>
 
     <!-- Dual Action Pill -->
-    <div class="relative z-10 mt-10 flex flex-col sm:flex-row items-center gap-4">
+    <div class="mt-10 flex flex-col sm:flex-row items-center gap-4">
       <button onclick="simulateNexusExecution()" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-black font-semibold text-sm hover:bg-neutral-200 transition-all hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.35)] flex items-center justify-center gap-3">
         <i data-lucide="play" class="w-4 h-4 fill-black"></i>
         <span>Trigger Swarm Simulation</span>
@@ -195,7 +238,7 @@
     </div>
 
     <!-- Live Quick Metrics Ribbon -->
-    <div class="relative z-10 mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 w-full max-w-4xl p-6 rounded-3xl bg-[#07070d]/80 border border-white/10 backdrop-blur-2xl shadow-2xl">
+    <div class="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 w-full max-w-4xl p-6 rounded-3xl bg-[#07070d]/85 border border-white/10 backdrop-blur-2xl shadow-2xl">
       <div class="text-left">
         <span class="text-[11px] font-mono text-neutral-400 uppercase block mb-1">Active Swarms</span>
         <span class="font-display text-2xl sm:text-3xl font-medium text-white tracking-tight" id="metric-swarms">1,482</span>
@@ -221,7 +264,7 @@
   </section>
 
   <!-- ==================== 3. INFINITE CLIENT MARQUEE ==================== -->
-  <section class="py-12 border-y border-white/5 relative overflow-hidden bg-black/60 backdrop-blur-md z-10">
+  <section class="reveal-section py-12 border-y border-white/5 relative overflow-hidden bg-black/75 backdrop-blur-md z-10">
     <div class="max-w-7xl mx-auto px-4 mb-4 text-center">
       <span class="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">
         Trusted to orchestrate critical autonomy across high-load infrastructures
@@ -245,13 +288,13 @@
     </div>
   </section>
 
-  <!-- ==================== 4. INTERACTIVE NEURAL CONSOLE ==================== -->
-  <section id="console" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10">
+  <!-- ==================== 4. INTERACTIVE NEURAL CONSOLE (SCROLL REVEAL) ==================== -->
+  <section id="console" class="reveal-section py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10">
     
     <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
       <div>
         <div class="inline-flex items-center gap-2 text-xs font-mono text-neutral-400 mb-3">
-          <span class="w-2 h-2 rounded-full bg-white"></span>
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
           <span>[LIVE TELEMETRY // 01]</span>
         </div>
         <h2 class="font-display text-3xl sm:text-5xl font-semibold tracking-tight text-white leading-tight">
@@ -290,7 +333,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
         
         <!-- Agent 1 -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-1">
+        <div class="reveal-card p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-1">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
               <i data-lucide="brain" class="w-4 h-4"></i>
@@ -304,7 +347,7 @@
         </div>
 
         <!-- Agent 2 -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-2">
+        <div class="reveal-card p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-2">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
               <i data-lucide="code-2" class="w-4 h-4"></i>
@@ -318,7 +361,7 @@
         </div>
 
         <!-- Agent 3 -->
-        <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-3">
+        <div class="reveal-card p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between" id="agent-card-3">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white">
               <i data-lucide="shield-check" class="w-4 h-4"></i>
@@ -336,7 +379,7 @@
       <!-- Live Terminal Output Area -->
       <div class="bg-black/80 rounded-2xl p-5 border border-white/5 font-mono text-xs text-neutral-300 min-h-[220px] max-h-[300px] overflow-y-auto space-y-2" id="term-logs">
         <div class="text-neutral-500">[00:00:01] Nexus cosmic 3D swarm daemon v3.8 initialized.</div>
-        <div class="text-neutral-500">[00:00:02] WebGL 3D Gravitational Field active. Rendering 3,000 stellar nodes.</div>
+        <div class="text-neutral-500">[00:00:02] WebGL 3D Gravitational Field active. Rendering 2,800 stellar nodes.</div>
         <div class="text-white/80">[00:00:03] Awaiting user intent or automated cron pipeline... <span class="term-cursor"></span></div>
       </div>
 
@@ -354,12 +397,12 @@
 
   </section>
 
-  <!-- ==================== 5. ARCHITECTURAL BENTO GRID ==================== -->
-  <section id="architecture" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10 border-t border-white/5">
+  <!-- ==================== 5. ARCHITECTURAL BENTO GRID (CINEMATIC 3D REVEAL) ==================== -->
+  <section id="architecture" class="reveal-section py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10 border-t border-white/5">
     
     <div class="text-center max-w-3xl mx-auto mb-20">
       <div class="inline-flex items-center gap-2 text-xs font-mono text-neutral-400 mb-3">
-        <span class="w-2 h-2 rounded-full bg-white"></span>
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
         <span>[CORE CAPABILITIES // 02]</span>
       </div>
       <h2 class="font-display text-4xl sm:text-6xl font-semibold tracking-tight text-white">
@@ -374,7 +417,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       
       <!-- Bento 1: Large Featured Card -->
-      <div class="nexus-card p-8 sm:p-10 md:col-span-2 flex flex-col justify-between">
+      <div class="nexus-card reveal-card p-8 sm:p-10 md:col-span-2 flex flex-col justify-between">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
             <i data-lucide="layers" class="w-6 h-6 text-white"></i>
@@ -398,7 +441,7 @@
       </div>
 
       <!-- Bento 2: Memory Ledger -->
-      <div class="nexus-card p-8 sm:p-10 flex flex-col justify-between">
+      <div class="nexus-card reveal-card p-8 sm:p-10 flex flex-col justify-between">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
             <i data-lucide="database" class="w-6 h-6 text-white"></i>
@@ -417,7 +460,7 @@
       </div>
 
       <!-- Bento 3: Formal Verification -->
-      <div class="nexus-card p-8 sm:p-10 flex flex-col justify-between">
+      <div class="nexus-card reveal-card p-8 sm:p-10 flex flex-col justify-between">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
             <i data-lucide="lock" class="w-6 h-6 text-white"></i>
@@ -436,7 +479,7 @@
       </div>
 
       <!-- Bento 4: Wide Card -->
-      <div class="nexus-card p-8 sm:p-10 md:col-span-2 flex flex-col justify-between">
+      <div class="nexus-card reveal-card p-8 sm:p-10 md:col-span-2 flex flex-col justify-between">
         <div>
           <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-8">
             <i data-lucide="cpu" class="w-6 h-6 text-white"></i>
@@ -460,12 +503,12 @@
 
   </section>
 
-  <!-- ==================== 6. PRICING & TIERS ==================== -->
-  <section id="pricing" class="py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10 border-t border-white/5">
+  <!-- ==================== 6. PRICING & TIERS (SCROLL REVEAL) ==================== -->
+  <section id="pricing" class="reveal-section py-28 px-4 sm:px-8 max-w-7xl mx-auto relative z-10 border-t border-white/5">
     
     <div class="text-center max-w-2xl mx-auto mb-16">
       <div class="inline-flex items-center gap-2 text-xs font-mono text-neutral-400 mb-3">
-        <span class="w-2 h-2 rounded-full bg-white"></span>
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
         <span>[DEPLOYMENT TIERS // 03]</span>
       </div>
       <h2 class="font-display text-3xl sm:text-5xl font-semibold tracking-tight text-white">
@@ -477,7 +520,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
       
       <!-- Tier 1 -->
-      <div class="nexus-card p-8 rounded-3xl flex flex-col justify-between">
+      <div class="nexus-card reveal-card p-8 rounded-3xl flex flex-col justify-between">
         <div>
           <span class="text-xs font-mono text-neutral-400 uppercase block mb-1">Developer</span>
           <h3 class="font-display text-2xl font-semibold text-white">Local Swarm</h3>
@@ -498,7 +541,7 @@
       </div>
 
       <!-- Tier 2 (Featured) -->
-      <div class="nexus-card p-8 rounded-3xl flex flex-col justify-between border-white/40 bg-white/[0.04] shadow-2xl relative">
+      <div class="nexus-card reveal-card p-8 rounded-3xl flex flex-col justify-between border-white/40 bg-white/[0.04] shadow-2xl relative">
         <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-1 rounded-full text-[10px] font-mono uppercase tracking-wider font-bold">
           RECOMMENDED
         </div>
@@ -522,7 +565,7 @@
       </div>
 
       <!-- Tier 3 -->
-      <div class="nexus-card p-8 rounded-3xl flex flex-col justify-between">
+      <div class="nexus-card reveal-card p-8 rounded-3xl flex flex-col justify-between">
         <div>
           <span class="text-xs font-mono text-neutral-400 uppercase block mb-1">Air-Gapped</span>
           <h3 class="font-display text-2xl font-semibold text-white">Enterprise Sovereign</h3>
@@ -546,7 +589,7 @@
   </section>
 
   <!-- ==================== 7. FOOTER ==================== -->
-  <footer class="py-16 px-4 sm:px-8 border-t border-white/10 relative z-10 bg-black/80">
+  <footer class="reveal-section py-16 px-4 sm:px-8 border-t border-white/10 relative z-10 bg-black/85">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
       
       <div class="flex items-center gap-3">
@@ -604,12 +647,10 @@
     </div>
   </div>
 
-  <!-- ==================== REAL THREE.JS 3D WEBGL INTERACTIVE COSMOS ==================== -->
+  <!-- ==================== THREE.JS 3D WEBGL COSMOS + SCROLLTRIGGER ANIMATIONS ==================== -->
   <script>
     // 1. THREE.JS REAL 3D CELESTIAL GALAXY & NEURAL SWARM
-    const container = document.getElementById('hero-section');
     const canvas = document.getElementById('webgl-cosmic-canvas');
-    
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
     camera.position.z = 400;
@@ -629,9 +670,8 @@
     const color3 = new THREE.Color(0x818cf8); // Indigo cosmic glow
 
     for (let i = 0; i < particleCount; i++) {
-      // Create spiral galaxy arm distribution
       const i3 = i * 3;
-      const radius = Math.random() * 450 + 20;
+      const radius = Math.random() * 480 + 20;
       const spinAngle = radius * 0.008;
       const branchAngle = ((i % 3) * 2 * Math.PI) / 3;
 
@@ -643,7 +683,6 @@
       positions[i3 + 1] = randomY + (Math.sin(radius * 0.02) * 20);
       positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
 
-      // Color blending
       const mixedColor = color1.clone();
       if (i % 2 === 0) mixedColor.lerp(color2, Math.random() * 0.85);
       else mixedColor.lerp(color3, Math.random() * 0.7);
@@ -656,7 +695,6 @@
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    // Particle Material
     const material = new THREE.PointsMaterial({
       size: 2.2,
       vertexColors: true,
@@ -668,25 +706,15 @@
     const starField = new THREE.Points(geometry, material);
     scene.add(starField);
 
-    // Glowing Core Sphere in Center of Galaxy
+    // Glowing Core Sphere
     const coreGeo = new THREE.SphereGeometry(18, 32, 32);
-    const coreMat = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.25,
-      wireframe: true
-    });
+    const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, wireframe: true });
     const coreSphere = new THREE.Mesh(coreGeo, coreMat);
     scene.add(coreSphere);
 
     // Outer Orbital Ring
     const ringGeo = new THREE.RingGeometry(85, 87, 64);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0x38bdf8,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.2
-    });
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.25 });
     const orbitRing = new THREE.Mesh(ringGeo, ringMat);
     orbitRing.rotation.x = Math.PI / 2.5;
     scene.add(orbitRing);
@@ -694,6 +722,7 @@
     // Mouse Tracking for Interactive 3D Cosmic Rotation
     let targetRotationX = 0;
     let targetRotationY = 0;
+    let scrollCameraZ = 400;
     let windowHalfX = window.innerWidth / 2;
     let windowHalfY = window.innerHeight / 2;
 
@@ -701,9 +730,15 @@
       const mouseX = event.clientX - windowHalfX;
       const mouseY = event.clientY - windowHalfY;
 
-      // Rotate galaxy in 3D based on mouse movement!
       targetRotationY = mouseX * 0.0012;
       targetRotationX = mouseY * 0.0009;
+    });
+
+    // Deep Space Warp on Scroll (Camera travels deeper into galaxy as you scroll down!)
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      scrollCameraZ = 400 - (scrollY * 0.12);
+      targetRotationY += 0.002;
     });
 
     function onWindowResize() {
@@ -715,13 +750,14 @@
     }
     window.addEventListener('resize', onWindowResize);
 
-    // 3D Animation Loop
     function animateCosmos() {
       requestAnimationFrame(animateCosmos);
 
-      // Smooth inertia rotation following mouse
-      starField.rotation.y += 0.0015 + (targetRotationY - starField.rotation.y) * 0.05;
+      starField.rotation.y += 0.0012 + (targetRotationY - starField.rotation.y) * 0.05;
       starField.rotation.x += (targetRotationX - starField.rotation.x) * 0.05;
+
+      // Smooth camera depth flight on scroll
+      camera.position.z += (scrollCameraZ - camera.position.z) * 0.05;
 
       coreSphere.rotation.y -= 0.003;
       coreSphere.rotation.x += 0.002;
@@ -733,7 +769,61 @@
     }
     animateCosmos();
 
-    // 2. Interactive Web Audio Synthesizer
+    // ==================== 2. AWARD-WINNING CINEMATIC SCROLL REVEALS ====================
+    // Intersection Observer for silky smooth 3D elevation on scroll
+    const observerOptions = {
+      root: null,
+      threshold: 0.15,
+      rootMargin: "0px 0px -50px 0px"
+    };
+
+    const scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          
+          // If section contains cards, stagger their reveal with 3D unfold effect
+          const cards = entry.target.querySelectorAll('.reveal-card');
+          cards.forEach((card, idx) => {
+            setTimeout(() => {
+              card.classList.add('is-revealed');
+            }, idx * 120);
+          });
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal-section').forEach(sec => {
+      scrollObserver.observe(sec);
+    });
+
+    // Also observe individual cards for natural scroll-triggered lift
+    document.querySelectorAll('.reveal-card').forEach(card => {
+      scrollObserver.observe(card);
+    });
+
+    // ==================== 3. 3D MAGNETIC CARD TILT ON MOUSE HOVER ====================
+    document.querySelectorAll('.nexus-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -7;
+        const rotateY = ((x - centerX) / centerX) * 7;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+      });
+    });
+
+    // ==================== 4. WEB AUDIO SYNTHESIZER ====================
     let audioCtx = null;
     let isSoundOn = false;
 
@@ -777,28 +867,7 @@
       lucide.createIcons();
     }
 
-    // 3. 3D Magnetic Card Tilt
-    document.querySelectorAll('.nexus-card').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -6;
-        const rotateY = ((x - centerX) / centerX) * 6;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
-      });
-    });
-
-    // 4. Live Swarm Simulator Script
+    // ==================== 5. LIVE SWARM SIMULATOR SCRIPT ====================
     function runLiveHandoff() {
       const logs = document.getElementById('term-logs');
       const btn = document.getElementById('btn-run-handoff');
@@ -810,27 +879,27 @@
       btn.textContent = '⚡ Orchestrating Task...';
       playSyntheticSound(520, 'sine', 0.2);
 
-      card1.className = 'p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.02] shadow-lg';
+      card1.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.03] shadow-lg';
       logs.innerHTML += `<div class="text-amber-300">[${new Date().toLocaleTimeString()}] [ORCHESTRATOR] Received: 'Compile 3D celestial telemetry Raft consensus with ZK verifier'</div>`;
       logs.scrollTop = logs.scrollHeight;
 
       setTimeout(() => {
-        card1.className = 'p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
-        card2.className = 'p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.02] shadow-lg';
+        card1.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
+        card2.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.03] shadow-lg';
         logs.innerHTML += `<div class="text-cyan-300">[${new Date().toLocaleTimeString()}] [SYNTHESIZER] Emitted 480 lines Rust zero-alloc orbital kernel.</div>`;
         logs.scrollTop = logs.scrollHeight;
         playSyntheticSound(680, 'sine', 0.15);
 
         setTimeout(() => {
-          card2.className = 'p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
-          card3.className = 'p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.02] shadow-lg';
+          card2.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
+          card3.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.08] border border-white/30 transition-all scale-[1.03] shadow-lg';
           logs.innerHTML += `<div class="text-emerald-300">[${new Date().toLocaleTimeString()}] [VERIFIER] ZK-STARK proof verified: 0 security violations found (0.3ms).</div>`;
           logs.innerHTML += `<div class="text-white font-bold">[${new Date().toLocaleTimeString()}] [CONSENSUS] Swarm signed orbital commit #0x77A1F9. Deployment SUCCESS.</div>`;
           logs.scrollTop = logs.scrollHeight;
           playSyntheticSound(880, 'sine', 0.3);
 
           setTimeout(() => {
-            card3.className = 'p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
+            card3.className = 'reveal-card is-revealed p-4 rounded-2xl bg-white/[0.02] border border-white/5 transition-all';
             btn.disabled = false;
             btn.textContent = '▶ Simulate Task Handoff';
           }, 1500);
@@ -846,7 +915,7 @@
       setTimeout(runLiveHandoff, 700);
     }
 
-    // 5. Modal Handlers
+    // Modal Handlers
     function openDeployModal(plan = 'Cluster Pro') {
       const modal = document.getElementById('deploy-modal');
       document.getElementById('modal-plan-title').textContent = `Deploy: ${plan}`;
