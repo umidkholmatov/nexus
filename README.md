@@ -1,6 +1,6 @@
 # NEXUS-01 — Autonomous Deep Space 3D Neural Swarm Template
 
-[![Buy on Gumroad](https://img.shields.io/badge/Gumroad-Buy%20License%20$49-FF90E8?style=for-the-badge&logo=gumroad&logoColor=black)](https://umidjonkholmatov.gumroad.com/l/fewmqg)
+[![Buy on Gumroad](https://img.shields.io/badge/Gumroad-Buy%20License%20$36-FF90E8?style=for-the-badge&logo=gumroad&logoColor=black)](https://umidjonkholmatov.gumroad.com/l/fewmqg)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://nexus-bice-beta-45.vercel.app/)
 
 **NEXUS-01** is an award-winning, Awwwards-inspired landing page template engineered for AI startups, multi-agent frameworks, decentralized compute networks, and high-performance developer tools.
