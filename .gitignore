@@ -1,0 +1,6 @@
+node_modules/
+videos/
+*.zip
+*.mp4
+*.webm
+package-lock.json
