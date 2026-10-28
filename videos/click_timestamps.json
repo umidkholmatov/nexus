@@ -1,0 +1,38 @@
+[
+  {
+    "label": "Simulate Task Handoff",
+    "time": 8.786
+  },
+  {
+    "label": "FAQ 1 Open",
+    "time": 18.101
+  },
+  {
+    "label": "FAQ 2 Open",
+    "time": 19.833
+  },
+  {
+    "label": "Annual Switch",
+    "time": 22.718
+  },
+  {
+    "label": "Monthly Switch",
+    "time": 24.112
+  },
+  {
+    "label": "Modal Open",
+    "time": 25.248
+  },
+  {
+    "label": "Submit Deploy",
+    "time": 27.211
+  },
+  {
+    "label": "Copy Key",
+    "time": 28.872
+  },
+  {
+    "label": "Modal Close",
+    "time": 29.998
+  }
+]
