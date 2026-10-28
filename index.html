@@ -190,21 +190,13 @@
       <a href="#pricing" class="px-5 py-2 rounded-full text-xs font-semibold text-neutral-300 hover:text-white hover:bg-white/10 transition-all">Deployments</a>
     </nav>
 
-    <!-- Right Controls: Audio Toggle + CTA -->
+    <!-- Right Controls: CTA -->
     <div class="pointer-events-auto flex items-center gap-3">
-      
-      <!-- Interactive UI Tap Sound Toggle -->
-      <button id="sound-btn" onclick="toggleAudio(event)" class="sound-badge sound-on flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#0a0a14]/90 backdrop-blur-2xl border border-cyan-400/40 text-cyan-300 hover:text-white text-xs font-mono transition-all shadow-xl" title="Toggle UI Tap Sounds">
-        <i data-lucide="volume-2" id="sound-icon" class="w-3.5 h-3.5 text-cyan-400"></i>
-        <span class="hidden sm:inline text-[11px] font-semibold" id="sound-text">TAP SFX: ON</span>
-      </button>
-
       <!-- Deploy Trigger -->
       <button onclick="openDeployModal()" class="px-6 py-2.5 rounded-full bg-white text-black hover:bg-neutral-200 text-xs font-bold tracking-tight transition-all hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.35)] flex items-center gap-2 group">
         <span>Initialize Swarm</span>
         <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform stroke-[2.5]"></i>
       </button>
-
     </div>
 
   </header>
@@ -719,32 +711,12 @@
       } catch (e) {}
     }
 
-    // Play clean tactile sound on ANY user tap / click anywhere on screen
+    // Play clean tactile sound on ANY user tap / click anywhere on screen (Always active)
     window.addEventListener('pointerdown', (e) => {
       const target = e.target;
       const isAction = target.closest('button, a, input, select, .nexus-card, [onclick]');
       playTapSound(isAction ? 'action' : 'default');
     }, { passive: true });
-
-    function toggleAudio(e) {
-      if (e) e.stopPropagation();
-      isSoundOn = !isSoundOn;
-      const btn = document.getElementById('sound-btn');
-      const icon = document.getElementById('sound-icon');
-      const text = document.getElementById('sound-text');
-
-      if (isSoundOn) {
-        btn.classList.add('sound-on');
-        text.textContent = 'TAP SFX: ON';
-        icon.setAttribute('data-lucide', 'volume-2');
-        playTapSound('action');
-      } else {
-        btn.classList.remove('sound-on');
-        text.textContent = 'TAP SFX: MUTED';
-        icon.setAttribute('data-lucide', 'volume-x');
-      }
-      lucide.createIcons();
-    }
 
     // 2. THREE.JS REAL 3D CELESTIAL GALAXY
     const canvas = document.getElementById('webgl-cosmic-canvas');
