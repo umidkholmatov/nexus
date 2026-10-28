@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#030306] text-[#f1f2f8]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — NEXUS-01 3D Template</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-display { font-family: 'Clash Display', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="p-6 sm:p-12 max-w-4xl mx-auto">
+  
+  <!-- Header -->
+  <header class="mb-12 pb-8 border-b border-white/10 flex items-center justify-between">
+    <div>
+      <div class="inline-flex items-center gap-2 text-xs font-mono text-cyan-400 mb-2">
+        <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+        <span>COMMERCIAL DEVELOPER DOCUMENTATION</span>
+      </div>
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-white">NEXUS-01 3D Template</h1>
+      <p class="text-sm text-neutral-400 mt-1">High-Performance Autonomous Multi-Agent 3D Landing Page</p>
+    </div>
+    <a href="index.html" class="px-5 py-2.5 rounded-full bg-white text-black text-xs font-bold hover:bg-neutral-200 transition-all">
+      Open Live Template →
+    </a>
+  </header>
+
+  <!-- Quick Start -->
+  <section class="mb-12">
+    <h2 class="font-display text-2xl font-bold text-white mb-4 flex items-center gap-2">
+      <i data-lucide="zap" class="w-5 h-5 text-cyan-400"></i>
+      <span>1. Quick Start</span>
+    </h2>
+    <p class="text-sm text-neutral-300 leading-relaxed mb-4">
+      NEXUS-01 is a zero-build-step, standalone template. You can run it immediately without complex bundlers or build tools:
+    </p>
+    <div class="p-4 rounded-2xl bg-[#0c0c16] border border-white/10 font-mono text-xs text-cyan-300 space-y-2">
+      <div class="text-neutral-500"># Option A: Python local server</div>
+      <div>python -m http.server 8080</div>
+      <div class="text-neutral-500 mt-2"># Option B: Node.js npx serve</div>
+      <div>npx serve .</div>
+      <div class="text-neutral-500 mt-2"># Option C: Double click index.html directly in any modern browser</div>
+    </div>
+  </section>
+
+  <!-- Customization -->
+  <section class="mb-12">
+    <h2 class="font-display text-2xl font-bold text-white mb-4 flex items-center gap-2">
+      <i data-lucide="sliders" class="w-5 h-5 text-cyan-400"></i>
+      <span>2. Customization Guide</span>
+    </h2>
+    
+    <div class="space-y-6">
+      <div class="p-6 rounded-2xl bg-[#0c0c16] border border-white/10">
+        <h3 class="font-display text-lg font-bold text-white mb-2">Changing Brand Colors</h3>
+        <p class="text-xs text-neutral-300 leading-relaxed mb-3">
+          The template uses Tailwind CSS with cyan (<code class="text-cyan-400">#38bdf8</code>) and indigo accents. Search for <code class="text-cyan-400 font-mono">cyan-400</code> in <code class="text-white font-mono">index.html</code> to replace with your preferred brand color (e.g. emerald, purple, amber).
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-[#0c0c16] border border-white/10">
+        <h3 class="font-display text-lg font-bold text-white mb-2">Tuning the 3D WebGL Galaxy</h3>
+        <p class="text-xs text-neutral-300 leading-relaxed mb-3">
+          In <code class="text-white font-mono">index.html</code> around line 760, locate the Three.js particle configuration:
+        </p>
+        <pre class="p-4 rounded-xl bg-black/50 border border-white/10 font-mono text-xs text-neutral-200 overflow-x-auto">
+const particleCount = 2800; // Increase for denser cosmos, decrease for ultra-low-end devices
+const color1 = new THREE.Color(0xffffff); // Core stars
+const color2 = new THREE.Color(0x38bdf8); // Cyan nebula
+const color3 = new THREE.Color(0x818cf8); // Indigo nebula</pre>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-[#0c0c16] border border-white/10">
+        <h3 class="font-display text-lg font-bold text-white mb-2">Tactile Audio Customization</h3>
+        <p class="text-xs text-neutral-300 leading-relaxed mb-3">
+          Sound synthesis is 100% procedural via the browser's native Web Audio API (zero audio MP3 files to host or load!). Locate <code class="text-cyan-400 font-mono">playTapSound()</code> around line 660 to adjust click frequencies or disable sound by setting <code class="text-white font-mono">let isSoundOn = false;</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1-Click Deployment -->
+  <section class="mb-12">
+    <h2 class="font-display text-2xl font-bold text-white mb-4 flex items-center gap-2">
+      <i data-lucide="cloud" class="w-5 h-5 text-cyan-400"></i>
+      <span>3. Deployment to Production</span>
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="p-6 rounded-2xl bg-[#0c0c16] border border-white/10">
+        <h4 class="font-bold text-white text-sm mb-1">Vercel</h4>
+        <p class="text-xs text-neutral-300 mb-3">Drag and drop this folder onto Vercel Dashboard or push to GitHub and click Import. Deploys in 10 seconds.</p>
+        <span class="text-[11px] font-mono text-cyan-400 font-semibold">vercel deploy --prod</span>
+      </div>
+      <div class="p-6 rounded-2xl bg-[#0c0c16] border border-white/10">
+        <h4 class="font-bold text-white text-sm mb-1">Cloudflare Pages / Netlify</h4>
+        <p class="text-xs text-neutral-300 mb-3">Static single-page architecture requires zero build command. Set output directory to root <code class="text-white font-mono">.</code>.</p>
+        <span class="text-[11px] font-mono text-cyan-400 font-semibold">Static Site Preset</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- License & Support -->
+  <footer class="pt-8 border-t border-white/10 text-xs text-neutral-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div>
+      <span class="text-white font-semibold">Commercial Developer License</span> — Unlimited personal and client projects.
+    </div>
+    <div class="font-mono text-neutral-500">
+      Engineered by Umidjon Xolmatov
+    </div>
+  </footer>
+
+  <script>lucide.createIcons();</script>
+</body>
+</html>
